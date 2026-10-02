@@ -1,0 +1,39 @@
+name: Canvas Notifier Cron
+
+on:
+  schedule:
+    # Runs every 20 minutes
+    - cron: '*/20 * * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  check-canvas-announcements:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to commit the updated JSON state file back to the repo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run notifier script
+        env:
+          CANVAS_FEEDS: ${{ secrets.CANVAS_FEEDS }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python notifier.py
+
+      - name: Save state (Commit)
+        # This official action commits the changes only if processed_ids.json was modified
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 chore: update processed announcements record"
+          file_pattern: "processed_ids.json"
