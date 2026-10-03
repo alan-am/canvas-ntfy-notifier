@@ -1,16 +1,13 @@
 name: Canvas Notifier Cron
 
 on:
-  schedule:
-    # Runs every 20 minutes
-    - cron: '*/20 * * * *'
-  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+  workflow_dispatch: # Allows manual and external(with API) executions.
 
 jobs:
   check-canvas-announcements:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required to commit the updated JSON state file back to the repo
+      contents: write 
 
     steps:
       - name: Checkout repository
@@ -32,7 +29,6 @@ jobs:
         run: python notifier.py
 
       - name: Save state (Commit)
-        # This official action commits the changes only if processed_ids.json was modified
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "🤖 chore: update processed announcements record"
