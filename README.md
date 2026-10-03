@@ -59,16 +59,33 @@ For security reasons (since external services will hold the token), we use a fin
 We use an external cron job to guarantee execution without GitHub's internal delays.
 1. Create a free account at [cron-job.org](https://cron-job.org/) and click **Create cronjob**.
 2. **Title:** Enter a name like `Cron Canvas Notifier`.
-3. **URL:** `https://api.github.com/repos/<YOUR_USERNAME>/<YOUR_REPO_NAME>/actions/workflows/main.yml/dispatches` 
+3. **URL:** `https://api.github.com/repos/<YOUR_USERNAME>/<YOUR_REPO_NAME>/actions/workflows/main.yml/dispatches`
+   
+   <img width="717" height="161" alt="Site cron-job.org Image 1" style="text-align: center;" src="https://github.com/user-attachments/assets/d06b9c6f-2937-470a-8c0d-50887e5865dc" />
+
+
 4. **Schedule (Crontab Expression):** You can set exactly when you want the bot to run. For example, using `*/30 6-23 * * *` will run the check every 30 minutes, except during the early morning hours (midnight to 5:59 AM) to save GitHub Action minutes.
+   
+   <img width="695" height="43" alt="Site cron-job.org Image 2" style="text-align: center;" src="https://github.com/user-attachments/assets/b4ea19f4-b3aa-458e-b451-d8f6189166ce" />
+
 5. Go to the **Advanced** section:
    * **Request method:** `POST`
    * **Request body:** Select Custom and enter `{"ref": "main"}`
+     
+   <img width="717" height="388" alt="Site cron-job.org Image 3" style="text-align: center;" src="https://github.com/user-attachments/assets/520ce85b-5088-46a3-bbfe-0dc8a9bcee76" />
+
 6. Under **Headers**, add the following three key-value pairs:
    * `Content-Type`: `application/json`
    * `Accept`: `application/vnd.github.v3+json`
    * `Authorization`: `Bearer github_pat_YOUR_TOKEN` (replace with your exact token from Step 5).
+     
+     <img width="722" height="217" alt="Site cron-job.org Image 4" style="text-align: center;" src="https://github.com/user-attachments/assets/266eb872-5086-4adf-924f-46cb422c3a5b" />
+
 7. Save the cronjob!
 
 **You're all set!** 
 The external cron will now perfectly trigger your GitHub Action on schedule.
+
+
+
+Extra note: using this configuration, the bot will use approximately 1,080 minutes of the GitHub Actions quota.
